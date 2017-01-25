@@ -10,4 +10,16 @@ public class App
     {
         System.out.println( "Hello World!" );
     }
+
+    /**
+     * Created by temp on 1/25/17.
+     */
+    public static class Query {
+    }
+
+    /**
+     * Created by temp on 1/25/17.
+     */
+    public static class Query {
+    }
 }
