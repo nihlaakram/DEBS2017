@@ -26,10 +26,8 @@ import java.util.ArrayList;
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-public class SparQL {
-
-
-    private static String queryString = " PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
+public class SparQLProcessor {
+    private final static String queryString = " PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
             "PREFIX wmm: <http://www.agtinternational.com/ontologies/WeidmullerMetadata#>" +
             "PREFIX debs:<http://project-hobbit.eu/resources/debs2017#>" +
             "PREFIX ssn: <http://purl.oclc.org/NET/ssnx/ssn#>" +
@@ -49,15 +47,16 @@ public class SparQL {
             "}" +
             "ORDER BY ASC (?timeStamp)";
 
+    /**
+     * @param fileName the file which contains RDF triples
+     */
     public static void excuteQuery(String fileName) {
         try {
-            ArrayList<String> str = new ArrayList<String>();
-            Logger log = Logger.getLogger(SparQL.class);
+
             FileWriter writer = new FileWriter(new File(fileName));
             String data;
             Model model = RDFDataMgr.loadModel("molding_machine_100M_rdf.ttl");
             Query query = QueryFactory.create(queryString);
-            try {
                 QueryExecution qexec = QueryExecutionFactory.create(query, model);
                 ResultSet results = qexec.execSelect();
                 results = ResultSetFactory.copyResults(results);
@@ -72,9 +71,7 @@ public class SparQL {
                         writer.write(data);
                     }
                 }
-            } catch (Exception e) {
-                log.info(e);
-            }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
