@@ -35,7 +35,7 @@ public class SparQLTestCase{
     @org.junit.Test
     public void Test1() throws InterruptedException {
         log.info("MedianAggregatorTestCase TestCase");
-        SparQL.excuteQuery(new File("100m_extract.csv"));
+        SparQL.excuteQuery("100m_extract.csv");
 
     }
 

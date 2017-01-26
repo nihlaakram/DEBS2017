@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 
-
 /*
 * Copyright (c) 2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
 *
@@ -29,68 +28,49 @@ import java.util.ArrayList;
 */
 public class SparQL {
 
-    private static ArrayList<String> str = new ArrayList<String>();
-    private static Float[] dataArr = new Float[120];
-    private  static File file;
-    private static FileWriter writer = null;
-    private static final Logger log = Logger.getLogger(SparQL.class);
 
+    private static String queryString = " PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
+            "PREFIX wmm: <http://www.agtinternational.com/ontologies/WeidmullerMetadata#>" +
+            "PREFIX debs:<http://project-hobbit.eu/resources/debs2017#>" +
+            "PREFIX ssn: <http://purl.oclc.org/NET/ssnx/ssn#>" +
+            "PREFIX IoTCore: <http://www.agtinternational.com/ontologies/IoTCore#>" +
+            "PREFIX i40: <http://www.agtinternational.com/ontologies/I4.0#>" +
+            "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>" +
+            "SELECT ?machine ?time ?timeStamp ?value ?property WHERE { " +
+            "?a rdf:type i40:MoldingMachineObservationGroup ." +
+            "?a i40:machine ?machine .  " +
+            "?a ssn:observationResultTime ?time ." +
+            "?time IoTCore:valueLiteral ?timeStamp ." +
+            "?a i40:contains ?b ." +
+            "?b ssn:observationResult ?c ." +
+            "?c ssn:hasValue ?d ." +
+            "?b ssn:observedProperty ?property ." +
+            "?d  IoTCore:valueLiteral ?value" +
+            "}" +
+            "ORDER BY ASC (?timeStamp)";
 
-
-
-    public static void excuteQuery( File fileName)  {
-        file = fileName;
+    public static void excuteQuery(String fileName) {
         try {
-            file.createNewFile();
-            writer = new FileWriter(file);
+            ArrayList<String> str = new ArrayList<String>();
+            Logger log = Logger.getLogger(SparQL.class);
+            FileWriter writer = new FileWriter(new File(fileName));
             String data;
             Model model = RDFDataMgr.loadModel("molding_machine_100M_rdf.ttl");
-            String queryString = " PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
-                    "PREFIX wmm: <http://www.agtinternational.com/ontologies/WeidmullerMetadata#>" +
-                    "PREFIX debs:<http://project-hobbit.eu/resources/debs2017#>" +
-                    "PREFIX ssn: <http://purl.oclc.org/NET/ssnx/ssn#>" +
-                    "PREFIX IoTCore: <http://www.agtinternational.com/ontologies/IoTCore#>" +
-                    "PREFIX i40: <http://www.agtinternational.com/ontologies/I4.0#>" +
-                    "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>" +
-                    "SELECT ?machine ?time ?timeStamp ?value ?property WHERE { " +
-                    "?a rdf:type i40:MoldingMachineObservationGroup ." +
-                    "?a i40:machine ?machine .  " +
-                    "?a ssn:observationResultTime ?time ." +
-                    "?time IoTCore:valueLiteral ?timeStamp ." +
-                    "?a i40:contains ?b ." +
-                    "?b ssn:observationResult ?c ." +
-                    "?c ssn:hasValue ?d ." +
-                    "?b ssn:observedProperty ?property ." +
-                    "?d  IoTCore:valueLiteral ?value" +
-                    "}" +
-                    "ORDER BY ASC (?timeStamp)";
             Query query = QueryFactory.create(queryString);
             try {
                 QueryExecution qexec = QueryExecutionFactory.create(query, model);
                 ResultSet results = qexec.execSelect();
                 results = ResultSetFactory.copyResults(results);
-
-                //ResultSetFormatter.out(System.out, results, query) ;
-
                 for (; results.hasNext(); ) {
                     QuerySolution soln = results.nextSolution();
-                    // RDFNode x = soln.get("time") ;       // Get a result variable by name.
                     Resource time = soln.getResource("time"); // Get a result variable - must be a resource
                     Resource property = soln.getResource("property");
                     Resource machine = soln.getResource("machine");
                     Literal value = soln.getLiteral("value");
-                    //Literal timeStamp = soln.getLiteral("timeStamp");// Get a result variable - must be a literal
-
-                    if (value.toString().contains("#string")) {
-                            //do nothing
-                    } else {
-
-                        data = machine.getLocalName()+","+time.getLocalName()+","+property.getLocalName()+","+value.getFloat()+"\n";
+                    if (!value.toString().contains("#string")) {
+                        data = machine.getLocalName() + "," + time.getLocalName() + "," + property.getLocalName() + "," + value.getFloat() + "\n";
                         writer.write(data);
                     }
-
-
-                    // System.out.println(r);
                 }
             } catch (Exception e) {
                 log.info(e);
@@ -98,9 +78,5 @@ public class SparQL {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
-
-
 }
