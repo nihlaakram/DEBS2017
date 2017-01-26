@@ -57,18 +57,19 @@ public class SparQLProcessor {
             String data;
             Model model = RDFDataMgr.loadModel("molding_machine_100M_rdf.ttl");
             Query query = QueryFactory.create(queryString);
-                QueryExecution qexec = QueryExecutionFactory.create(query, model);
-                ResultSet results = qexec.execSelect();
-                results = ResultSetFactory.copyResults(results);
-                for (; results.hasNext(); ) {
-                    QuerySolution soln = results.nextSolution();
-                    Resource time = soln.getResource("time"); // Get a result variable - must be a resource
-                    Resource property = soln.getResource("property");
-                    Resource machine = soln.getResource("machine");
-                    Literal value = soln.getLiteral("value");
-                    if (!value.toString().contains("#string")) {
-                        data = machine.getLocalName() + "," + time.getLocalName() + "," + property.getLocalName() + "," + value.getFloat() + "\n";
-                        writer.write(data);
+                try(QueryExecution qexec = QueryExecutionFactory.create(query, model)) {
+                    ResultSet results = qexec.execSelect();
+                    results = ResultSetFactory.copyResults(results);
+                    for (; results.hasNext(); ) {
+                       QuerySolution soln = results.nextSolution();
+                        Resource time = soln.getResource("time"); // Get a result variable - must be a resource
+                        Resource property = soln.getResource("property");
+                        Resource machine = soln.getResource("machine");
+                        Literal value = soln.getLiteral("value");
+                        if (!value.toString().contains("#string")) {
+                            data = machine.getLocalName() + "," + time.getLocalName() + "," + property.getLocalName() + "," + value.getFloat() + "\n";
+                            writer.write(data);
+                        }
                     }
                 }
 
