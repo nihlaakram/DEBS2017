@@ -20,6 +20,6 @@ public class App
     /**
      * Created by temp on 1/25/17.
      */
-    public static class Query {
+    public static class Query1 {
     }
 }
