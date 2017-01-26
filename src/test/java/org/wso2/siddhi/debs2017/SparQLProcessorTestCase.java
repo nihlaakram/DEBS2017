@@ -2,10 +2,7 @@ package org.wso2.siddhi.debs2017;
 
 import org.apache.log4j.Logger;
 import org.junit.Before;
-import org.wso2.siddhi.debs2017.input.SparQL;
-
-import java.io.File;
-import java.util.concurrent.atomic.AtomicInteger;
+import org.wso2.siddhi.debs2017.input.SparQLProcessor;
 
 /*
 * Copyright (c) 2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
@@ -22,9 +19,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-public class SparQLTestCase{
+public class SparQLProcessorTestCase {
 
-    private static final Logger log = Logger.getLogger(SparQL.class);
+    private static final Logger log = Logger.getLogger(SparQLProcessor.class);
 
 
     @Before
@@ -35,7 +32,7 @@ public class SparQLTestCase{
     @org.junit.Test
     public void Test1() throws InterruptedException {
         log.info("MedianAggregatorTestCase TestCase");
-        SparQL.excuteQuery(new File("100m_extract.csv"));
+        SparQLProcessor.excuteQuery("100m_extract.csv");
 
     }
 
